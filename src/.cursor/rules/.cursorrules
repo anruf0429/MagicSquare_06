@@ -1,0 +1,149 @@
+################################################################################
+# project
+project:
+  name: MagicSquare
+  description: 정방행렬에서 마방진 생성과 검증을 수행하는 Python 기반 프로젝트
+  methodology: Dual-Track UI + Logic TDD with MLOps
+
+################################################################################
+# code_style
+code_style:
+  pep8: 엄격 준수
+  python_version: "3.10+"
+  type_hints: 모든 함수 파라미터와 반환값에 필수
+  docstring: Google 스타일로 모든 public 메서드에 필수
+  max_line_length: 88
+
+################################################################################
+# architecture
+architecture:
+  pattern: ECB
+  layers:
+    boundary:
+      role: UI/API/CLI 등 외부 입출력 처리 및 요청/응답 변환 담당
+    control:
+      role: 유스케이스 흐름 제어와 비즈니스 로직 오케스트레이션 담당
+    entity:
+      role: 도메인 데이터 구조와 핵심 규칙(불변성) 담당
+  dependency_direction:
+    - boundary -> control
+    - control -> entity
+    - entity -> 없음(상위 레이어 의존 금지)
+
+################################################################################
+# tdd_rules
+tdd_rules:
+  red_phase:
+    description: 실패하는 테스트를 먼저 작성해 요구사항을 명확히 하는 단계
+    rules:
+      - 프로덕션 코드 수정 전에 테스트를 먼저 작성한다.
+      - 테스트 실패 원인이 목표 기능 미구현임을 확인한다.
+      - 실패 범위는 단일 책임 단위로 최소화한다.
+    must_not:
+      - 테스트 실패 확인 없이 다음 단계로 진행
+      - 여러 기능을 한 테스트에 동시에 결합
+      - 실패 원인 분석 없이 임의로 코드 작성
+  green_phase:
+    description: 작성된 테스트를 통과시키기 위한 최소 구현을 수행하는 단계
+    rules:
+      - 테스트를 통과하는 최소 코드만 작성한다.
+      - 불필요한 추상화/일반화를 미룬다.
+      - 변경 후 관련 테스트를 즉시 재실행한다.
+    must_not:
+      - 리팩터링 수행
+      - 현재 테스트 범위 밖 기능 선구현
+      - 설계 고도화를 위한 구조 변경
+  refactor_phase:
+    description: 기능 변경 없이 코드 품질과 구조를 개선하는 단계
+    rules:
+      - 외부 동작과 공개 인터페이스를 유지한다.
+      - 작은 단위로 리팩터링하고 매 단계 테스트를 통과시킨다.
+      - 리팩터링 전후 커버리지를 기준 이상으로 유지한다.
+    must_not:
+      - 신규 기능 추가
+      - API 계약 또는 도메인 규칙 변경
+      - 테스트 삭제로 커버리지 하락 유도
+
+################################################################################
+# testing
+testing:
+  framework: pytest
+  pattern: AAA (Arrange-Act-Assert)
+  fixture_rules:
+    default_scope: function
+    allowed_shared_scope:
+      - 모듈/세션 스코프는 읽기 전용이고 부작용이 없는 경우에만 허용
+      - 공유 fixture는 테스트 간 상태 오염 방지 장치를 갖춰야 함
+  coverage:
+    minimum: "80%"
+    policy: 신규/수정 코드 경로는 기존 커버리지 이하로 떨어지면 안 됨
+  naming:
+    files: test_ 접두사 필수
+    functions: test_ 접두사 필수
+
+################################################################################
+# forbidden
+forbidden:
+  - pattern: print()
+    reason: 임시 디버깅 출력은 로그 일관성을 깨고 운영 환경 추적을 어렵게 함
+    alternative: logging 모듈 기반의 구조화된 로그 사용
+  - pattern: except:
+    reason: bare except는 원인 파악을 어렵게 하고 중요한 예외를 숨길 수 있음
+    alternative: 구체적인 예외 타입을 명시하고 필요한 경우 재발생 처리
+  - pattern: 하드코딩 상수
+    reason: 정책 변경 시 유지보수 비용 증가 및 중복 위험 발생
+    alternative: entity 또는 config 모듈의 명명된 상수/설정값으로 분리
+  - pattern: boundary에서 도메인 규칙 직접 구현
+    reason: 레이어 경계 붕괴로 비즈니스 규칙 재사용성과 테스트성이 저하됨
+    alternative: control/entity로 규칙 이동 후 boundary는 입출력 변환만 수행
+
+################################################################################
+# file_structure
+file_structure:
+  example:
+    - src/
+    - src/boundary/
+    - src/boundary/ui/
+    - src/boundary/api/
+    - src/boundary/cli/
+    - src/control/
+    - src/control/use_cases/
+    - src/control/services/
+    - src/entity/
+    - src/entity/models/
+    - src/entity/rules/
+    - tests/
+    - tests/boundary/
+    - tests/control/
+    - tests/entity/
+
+################################################################################
+# ai_behavior
+ai_behavior:
+  before_generation:
+    - 코드 작성 전 반드시 관련 테스트 파일과 기존 실패/성공 상태를 확인한다.
+    - 수정 대상이 속한 ECB 레이어와 허용 의존 방향을 먼저 식별한다.
+  during_generation:
+    - ECB 레이어 경계를 넘는 의존성 코드를 생성하지 않는다.
+    - 타입힌트 없는 함수를 생성하지 않는다.
+    - 현재 TDD 단계 규칙(red/green/refactor)을 위반하지 않는다.
+  after_generation:
+    - 관련 pytest를 실행해 결과를 확인하고 변경 영향 범위를 명시한다.
+    - tdd_rules 위반이 감지되면 TDD_RULES_VIOLATION 경고를 출력한다.
+    - 위반 시 최소 수정 경로를 제안하고 무단으로 단계 전환하지 않는다.
+    
+################################################################################
+# 추가 요구사항:
+- MagicSquare의 핵심 도메인을 반영하라:
+  - 4x4 magic square
+  - 입력 검증
+  - 누락값 계산
+  - 합 34 검증
+  - 사용자 입력 UI와 순수 계산 로직 분리
+- boundary는 UI/입력/출력만 담당
+- control은 유스케이스 조합과 흐름 제어만 담당
+- entity는 순수 규칙/검증/계산 책임만 담당
+- 테스트는 entity → control → boundary 순으로 우선순위를 둔다
+- UI 구현 전 순수 로직 테스트를 먼저 작성하도록 강제한다
+- mock 남용 금지, 순수 함수 우선 설계를 명시하라
+- 숨은 상태보다 명시적 데이터 전달을 선호하도록 규칙화하라

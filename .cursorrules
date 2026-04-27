@@ -1,0 +1,133 @@
+################################################################################
+project:
+  name: MagicSquare
+  domain: Magic square generation and validation
+  primary_language: python
+
+################################################################################
+code_style:
+  python_version: "3.10+"
+  style_guide: PEP8 strict
+  type_hints: Required for all function parameters and return values
+  docstring: Google style required for all public methods
+  max_line_length: 88
+
+################################################################################
+architecture:
+  pattern: ECB
+  layers:
+    boundary:
+      role: External input/output handling (UI, API, CLI)
+      responsibilities:
+        - Parse and validate external requests
+        - Convert external data to control-friendly input
+        - Format control output for external interfaces
+    control:
+      role: Business logic orchestration
+      responsibilities:
+        - Coordinate use cases and application flow
+        - Invoke entity rules and compose results
+        - Manage transactions and process-level decisions
+    entity:
+      role: Domain data and core invariants
+      responsibilities:
+        - Define domain models and value objects
+        - Enforce domain constraints and invariants
+        - Provide pure domain behavior independent of IO
+  dependency_direction:
+    - boundary -> control
+    - control -> entity
+    - entity -> (no dependency to upper layers)
+    - forbidden:
+        - control -> boundary
+        - entity -> control
+        - entity -> boundary
+
+################################################################################
+tdd_rules:
+  red_phase:
+    description: 테스트를 먼저 작성하고 의도한 실패를 확인하는 단계
+    rules:
+      - Write or update tests before production code changes
+      - Run tests and verify failure is caused by the expected unmet behavior
+      - Keep failure scope minimal and specific to target behavior
+    must_not:
+      - Implement production logic before confirming test failure
+      - Skip executing tests after writing them
+      - Accept unrelated failures as valid red signal
+  green_phase:
+    description: 테스트를 통과시키기 위한 최소 구현 단계
+    rules:
+      - Implement the smallest change required to make failing tests pass
+      - Prioritize correctness for current test scope over generalization
+      - Re-run impacted tests immediately after code changes
+    must_not:
+      - Perform refactoring in this phase
+      - Introduce new features not required by current tests
+      - Expand abstractions preemptively
+  refactor_phase:
+    description: 동작 변경 없이 내부 구조를 개선하는 단계
+    rules:
+      - Preserve externally observable behavior and public contracts
+      - Keep all tests passing before and after each refactor step
+      - Maintain or improve coverage level during refactoring
+    must_not:
+      - Change feature behavior, API contract, or domain rules intentionally
+      - Merge refactor with new feature development
+      - Reduce test coverage below baseline
+
+################################################################################
+testing:
+  framework: pytest
+  pattern: AAA (Arrange-Act-Assert)
+  coverage_minimum: "80%"
+  fixture_scope:
+    default: function
+    module_or_session_allowed_when:
+      - Expensive setup is read-only and reused safely
+      - Shared state is isolated and does not leak across tests
+  naming_convention: test_ prefix required for all test files and test functions
+
+################################################################################
+forbidden:
+  - pattern: print()
+    reason: Runtime output noise and weak observability in production paths
+    alternative: Use structured logging via logging module with proper log levels
+  - pattern: Hard-coded constants in business logic
+    reason: Low maintainability and hidden domain policy changes
+    alternative: Centralize constants in entity/config modules with clear names
+  - pattern: except:
+    reason: Bare except hides critical errors and interrupts debugging
+    alternative: Catch specific exception types and handle or re-raise explicitly
+
+################################################################################
+file_structure:
+  # MagicSquare/
+  # ├─ boundary/
+  # │  ├─ ui/
+  # │  ├─ api/
+  # │  └─ cli/
+  # ├─ control/
+  # │  ├─ use_cases/
+  # │  └─ services/
+  # ├─ entity/
+  # │  ├─ models/
+  # │  └─ rules/
+  # └─ tests/
+  #    ├─ boundary/
+  #    ├─ control/
+  #    └─ entity/
+
+################################################################################
+ai_behavior:
+  before_code_generation:
+    - Check related existing test files before writing or editing code
+    - Identify target ECB layer and expected dependency direction first
+  during_code_generation:
+    - Do not violate ECB layer boundaries
+    - Do not create functions without type hints for parameters and return values
+    - Follow active TDD phase constraints from tdd_rules
+  after_code_generation:
+    - Re-run relevant tests and report failures clearly
+    - If tdd_rules are violated, output warning: "TDD_RULES_VIOLATION"
+    - Propose minimal corrective next step aligned with current phase
