@@ -87,3 +87,60 @@
 - ECB 원칙을 준수한 `User` 엔티티 1종 작성 완료
 - pytest AAA 기반 엔티티 단위 테스트 작성 완료
 - 로컬 환경 의존성(pytest) 부재로 실행 검증은 보류, 문법 검증은 완료
+
+---
+
+## 부록) User Journey — Magic Square (4x4)
+
+### Persona
+
+- TDD 연습 중인 개발자
+- 알고리즘 자체보다 설계 연습이 목적
+
+### Goal
+
+- 마방진을 정확하게 완성하고
+- 로직이 invariant를 만족하는지 검증하고 싶다
+
+### Stage 1: Awareness
+
+- **Action**: 문제를 확인한다
+- **Thinking**: "빈칸 2개를 채우는 문제네"
+- **Emotion**: 가벼운 도전감
+- **Pain**: 문제 정의가 모호할 수 있음
+- **Opportunity**: 입력/출력 계약 명확화
+
+### Stage 2: Entry
+
+- **Action**: 입력 구조를 파악한다 (4x4, `0=blank`)
+- **Thinking**: "좌표와 값 반환 형식부터 정해야겠다"
+- **Emotion**: 집중 상태
+- **Pain**: 조건 누락 위험
+- **Opportunity**: Contract-first 설계
+
+### Stage 3: Action
+
+- **Action**:
+  - 빈칸 좌표 찾기
+  - 누락 숫자 찾기
+  - 조합 시도
+- **Thinking**: "작은 수 먼저 넣어볼까?"
+- **Emotion**: 탐색 / 시행착오
+- **Pain**: 조합 로직 혼란
+- **Opportunity**: SRP 기반 메서드 분리
+
+### Stage 4: Validation
+
+- **Action**: 행/열/대각선 합 검증
+- **Thinking**: "34가 맞나?"
+- **Emotion**: 긴장 -> 확신
+- **Pain**: 검증 로직 중복 가능
+- **Opportunity**: Invariant 기반 설계
+
+### Stage 5: Outcome
+
+- **Action**: 결과 반환
+- **Thinking**: "이제 테스트 통과했나?"
+- **Emotion**: 만족감
+- **Pain**: 결과 포맷 오류 가능
+- **Opportunity**: Output schema 고정
