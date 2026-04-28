@@ -105,6 +105,13 @@ python -m pip install -U pip
 pip install -e ".[dev]"
 ```
 
+**GUI 실행(PyQt6):**
+
+```powershell
+pip install -e ".[gui]"
+python -m magic_square
+```
+
 **테스트 (전체):** 루트에서 `pytest` — `pyproject.toml`의 `testpaths`·`pythonpath=src`로 `entity`·`magic_square`를 import한다. `tests/domain`의 TC-MS RED 스켈레톤은 아직 `pytest.fail("RED")`라 **실패가 정상**이고, 엔티티 샘플만 보려면 `pytest tests/entity -q`.
 
 **커버리지:** `pip install pytest-cov` 또는 `pip install -e ".[cov]"` 후, 배포 이름은 `magicsquare`이지만 측정 대상 **임포트 패키지**는 `magic_square`·`entity`이다.

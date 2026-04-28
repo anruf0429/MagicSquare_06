@@ -11,7 +11,8 @@ from magic_square.boundary.errors import (
     UI_OUT_OF_RANGE,
     BoundaryError,
 )
-from magic_square.boundary.validation import validate_matrix_raw
+from magic_square.boundary.matrix_validator import validate_matrix_raw
+from magic_square.boundary.solve import solve_matrix
 
 __all__ = [
     "MESSAGES",
@@ -21,5 +22,6 @@ __all__ = [
     "UI_INVALID_SIZE",
     "UI_OUT_OF_RANGE",
     "BoundaryError",
+    "solve_matrix",
     "validate_matrix_raw",
 ]
