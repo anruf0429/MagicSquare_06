@@ -7,21 +7,32 @@
 
 ---
 
+## 현재까지의 작업 (저장소 스냅샷)
+
+| 구분 | 상태 |
+|------|------|
+| **요구·설계 문서** | **PRD v2.1** 고정: Dual-Track을 **UX Contract / Logic Rule** 언어로 정리(§2.3), **CI·커버리지 게이트**·산출물(§7.1, **NFR-06**), Track A/B 정의(§8.0), 경계·도메인 테스트 역할(§8.4), **§9.1** 시나리오 매핑 표 등. 계층 설계는 `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`. 문제 정의·Dual-Track·ECB 예시·여정 인덱스·README 내보내기·PRD 갱신 이력은 `report/01`~`06` 참조. |
+| **구현 코드** | PRD **FR-01~05**(경계 검증·마방진 도메인 솔버)는 **아직 없음**. ECB·pytest AAA 패턴 예시로 **`User` 엔티티**와 해당 테스트만 존재(`src/entity/models/user.py`, `tests/entity/` — [report/03](report/03_user_entity_ecb_tdd_implementation_report.md)과 같은 취지). |
+| **빌드 설정** | 루트에 **`pyproject.toml` 없음**. 추가 시 Python 버전·pytest·커버리지의 단일 기준으로 삼을 것([report/05](report/05_readme_project_export_report.md) 후속 권장과 동일). |
+
+---
+
 ## 문서·근거 (무엇을 보면 되나)
 
 | 역할 | 문서 | 비고 |
 |------|------|------|
 | 본문·To-Do·검증 기준의 중심 | [docs/PRD_magic_square_4x4_tdd.md](docs/PRD_magic_square_4x4_tdd.md) | v2.1 — §2.3·§7.1·§9.1 등; FR-01~05, BR, NFR, Dual-Track, Traceability |
 | 레이어·계약·TC ID (설계) | [docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md](docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md) | IC/OC, Domain/Boundary 구조 |
+| 문제 인식·Invariant | [report/01_problem_definition_report.md](report/01_problem_definition_report.md) | 초기 문제 정의 |
 | 스토리·에픽·여정 표현 | [report/04_prd_journey_architecture_export_report.md](report/04_prd_journey_architecture_export_report.md) | §3: Epic, Journey, User Stories, 기술 시나리오 요약 |
 | README·온보딩 작업 내보내기 | [report/05_readme_project_export_report.md](report/05_readme_project_export_report.md) | `README.md` 작성 배경·산출물·검증·후속 권장 |
 | PRD v2.1 갱신·Dual-Track/MLOps 정렬 이력 | [report/06_dual_track_mlops_prd_update_report.md](report/06_dual_track_mlops_prd_update_report.md) | 변경 요약·§2.3·§7.1·§9.1·DEC-05 등 |
 | 경계 `UI_*`·메시지·Dual-Track 요약 | [report/02_dual_track_ui_logic_tdd_clean_architecture_report.md](report/02_dual_track_ui_logic_tdd_clean_architecture_report.md) | §2.2 테이블, `UI-RED-*`, §0 PRD 정합 |
 | 실행·ECB·엔티티 TDD 절차 예시 | [report/03_user_entity_ecb_tdd_implementation_report.md](report/03_user_entity_ecb_tdd_implementation_report.md) | ECB·pytest AAA·`entity` 샘플 |
 | 에디터/에이전트 규칙 | [.cursorrules](.cursorrules) | ECB 방향, RED/GREEN/REFACTOR, pytest, coverage 최소값 |
-| 빌드·의존성(추가 시) | `pyproject.toml` (프로젝트 루트) | **현재 repo에 없을 수 있음.** 추가되면 Python 버전·`pytest`·커버리지 설정의 단일 기준으로 사용. |
+| 빌드·의존성(추가 시) | `pyproject.toml` (프로젝트 루트) | **현재 없음.** 추가되면 Python 버전·`pytest`·커버리지 설정의 단일 기준으로 사용. |
 
-**문서 관계(한 줄):** 요구사항의 **단일 진실 공급원**은 PRD와 DESIGN으로 두고, PRD·여정·설계 인덱스는 [report/04](report/04_prd_journey_architecture_export_report.md) §4~6에 정리한다. 프로젝트 진입 문서(`README.md`) 작성·문서 맵 내보내기는 [report/05](report/05_readme_project_export_report.md)에서 보고한다. `docs/5_*` 등 별도 분리는 report/04 §6 권장과 같은 취지로 유지할 수 있다.
+**문서 관계(한 줄):** 요구사항의 **단일 진실 공급원**은 PRD와 DESIGN으로 두고, PRD·여정·설계 인덱스는 [report/04](report/04_prd_journey_architecture_export_report.md) §4~6에 정리한다. 프로젝트 진입 문서(`README.md`) 작성·문서 맵 내보내기는 [report/05](report/05_readme_project_export_report.md)에서 보고한다. PRD v2.1 개정 요약은 [report/06](report/06_dual_track_mlops_prd_update_report.md)을 본다. `docs/5_*` 등 별도 분리는 report/04 §6 권장과 같은 취지로 유지할 수 있다.
 
 ---
 
@@ -82,14 +93,15 @@
 - **TDD:** RED → GREEN → REFACTOR(`.cursorrules` `tdd_rules`).  
 - **테스트:** `pytest`, **AAA**, 테스트 함수·파일 `test_` 접두, 타입힌트·공개 API Google docstring(Report/3·`.cursorrules`과 동일).  
 - **Python:** 3.10+ (`.cursorrules` `code_style`).  
-- `pyproject.toml`이 있으면 그 안의 `[tool.pytest]`·의존성·커버리지 스크립트를 **실제 실행의 기준**으로 쓰고, 없을 때는 예시로 의존성을 설치한 뒤:
 
-```bash
+현재는 **`pyproject.toml` 없이** 예시 테스트만 있다. 의존성 설치 후 프로젝트 루트에서:
+
+```powershell
 python -m pip install pytest pytest-cov
-python -m pytest -q
+python -m pytest tests/entity -q
 ```
 
-(프로젝트에 `tests/`·`pyproject.toml`이 정리되면 이 섹션을 그에 맞게 갱신하면 된다.)
+`tests/entity/`의 테스트는 실행 시 `src`를 `sys.path`에 넣도록 되어 있다. `pyproject.toml`과 전체 패키지 레이아웃이 생기면 위 명령과 문구를 그 설정에 맞게 바꾼다.
 
 ---
 
@@ -128,8 +140,10 @@ python -m pytest -q
 
 - [PRD (중심)](docs/PRD_magic_square_4x4_tdd.md)  
 - [DESIGN](docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md)  
+- [Report/1 — 문제 정의](report/01_problem_definition_report.md)  
 - [Report/4 — 스토리·에픽·인덱스](report/04_prd_journey_architecture_export_report.md)  
 - [Report/5 — README·온보딩 내보내기](report/05_readme_project_export_report.md)  
+- [Report/6 — PRD v2.1·Dual-Track/MLOps 갱신](report/06_dual_track_mlops_prd_update_report.md)  
 - [Report/2 — 경계·계약](report/02_dual_track_ui_logic_tdd_clean_architecture_report.md)  
 - [Report/3 — ECB·TDD 예시](report/03_user_entity_ecb_tdd_implementation_report.md)  
 - [`.cursorrules`](.cursorrules)  

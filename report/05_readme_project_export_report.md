@@ -4,9 +4,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 보고서 버전 | 1.1 |
+| 보고서 버전 | 1.2 |
 | 상태 | 산출물 인덱스·내보내기 |
-| 근거 문서 | `docs/PRD_magic_square_4x4_tdd.md`(v2.1), `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`, `report/02_*`, `report/03_*`, `report/04_*`, `report/06_*`, `.cursorrules` |
+| 근거 문서 | `docs/PRD_magic_square_4x4_tdd.md`(v2.1), `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`, `report/01_*`, `report/02_*`, `report/03_*`, `report/04_*`, `report/06_*`, `.cursorrules`, 현재 `README.md` |
 
 ---
 
@@ -22,7 +22,7 @@
 
 | 구분 | 경로 | 설명 |
 |------|------|------|
-| 프로젝트 진입·To-Do | `README.md` | 프로젝트 요약, 문서 근거 표, 도메인 요약, `UI_*` 표, User Story(Report/4 정합), NFR 검증 요약, ECB·pytest 실행 안내, Epic/FR 단위 To-Do 체크리스트, 참고 링크 |
+| 프로젝트 진입·To-Do | `README.md` | 프로젝트 요약, **저장소 스냅샷**(문서 v2.1·구현·`pyproject.toml` 유무), 문서 근거 표(Report/1 포함), 도메인 요약, `UI_*` 표, User Story(Report/4 정합), NFR 검증 요약, ECB·pytest 실행 안내(`tests/entity` 예시), Epic/FR 단위 To-Do 체크리스트, 참고 링크 |
 | 본 내보내기 보고서 | `report/05_readme_project_export_report.md` | README 작성 배경·목적·관련 문서 관계·후속 권장 |
 
 기존 산출물과의 관계는 다음과 같다.
@@ -45,13 +45,14 @@
 | 섹션 | 내용 | 주 근거 |
 |------|------|---------|
 | 도입 | 4×4 부분 빈칸 완성 목표, TDD·Invariant 강조 | PRD Executive Summary |
-| 문서·근거 표 | PRD, DESIGN, Report/2·3·4, `.cursorrules`, `pyproject.toml`(선택) | 사용자 요청 체계 |
+| 현재까지의 작업 | 요구·설계 문서 상태, FR-01~05 미구현·ECB `User` 예시만 존재, `pyproject.toml` 없음 | README와 저장소 정합(온보딩 투명성) |
+| 문서·근거 표 | PRD, DESIGN, Report/1·2·3·4·5·6, `.cursorrules`, `pyproject.toml`(선택·현재 없음) | 사용자 요청 체계 |
 | 문서 관계 한 줄 | PRD+DESIGN을 SSoT로, 인덱스는 Report/4; Report/5 분리 전까지 README·본 보고서로 보완 | Report/04 §6 권장과 정합 |
 | 도메인 요약 | 4×4, 0 두 칸, 합 34, `int[6]`·1-index | PRD §5~6 |
 | 경계 `UI_*` 표 | 고정 code/message | Report/02 §2.2, PRD §8.1; PRD §2.3·§9.1(UX Contract·매핑) |
 | User Story 요약 | 검증·빈칸·누락·판정·두 조합 | Report/04 §3.3 |
 | 검증 기준 | NFR-01~06, 커버리지·CI 게이트 | PRD §7·§7.1 |
-| 실행·ECB·TDD | 의존 방향, pytest·AAA, Python 3.10+ | Report/03, `.cursorrules` |
+| 실행·ECB·TDD | 의존 방향, pytest·AAA, Python 3.10+; 예: `python -m pytest tests/entity -q` | Report/03, `.cursorrules` |
 | To-Do | Epic-001 Track-A/B, Entity, Control, 품질, T-FR-01~05 등 | PRD FR·Dual-Track |
 | 참고 링크 | 위 문서 일괄 링크 | — |
 
@@ -64,7 +65,7 @@
 | ID | 내용 | 상태 판단 |
 |----|------|-----------|
 | VE-01 | `README.md`가 존재하고 PRD를 중심 문서로 명시한다 | 파일 존재·내용 |
-| VE-02 | Report/2·3·4 역할이 표 또는 본문으로 연결된다 | README 「문서·근거」 |
+| VE-02 | Report/1·2·3·4·6 역할이 표 또는 본문으로 연결된다 | README 「문서·근거」 |
 | VE-03 | To-Do가 PRD FR/NFR·Dual-Track과 대응 가능한 수준으로 체크리스트화된다 | README 「To-Do」 |
 | VE-04 | 경계 `UI_*` 고정 메시지가 Report/2·PRD와 불일치하지 않는다 | 표 문자열 대조 |
 
@@ -74,8 +75,8 @@
 
 ## 5) 후속 권장
 
-- **`pyproject.toml`** 추가 시 README 「실행」절을 해당 파일의 Python 버전·`pytest`·커버리지 설정에 맞게 갱신한다.
-- 마방진 도메인·경계 구현이 진행되면 **`README.md`의 To-Do 체크박스**를 실제 스프린트·PR 단위로 세분화하거나 `docs/TODO_*.md`로 분리할 수 있다.
+- **`pyproject.toml`** 추가 시 README 「실행」절을 해당 파일의 Python 버전·`pytest`·커버리지 설정에 맞게 갱신하고, 필요하면 **`## 현재까지의 작업`** 표의 빌드 설정 행을「있음」으로 바꾼다.
+- 마방진 도메인·경계 구현이 진행되면 **`README.md`의 To-Do 체크박스**와 저장소 스냅샷 표를 함께 갱신하거나, 세분화 시 `docs/TODO_*.md`로 분리할 수 있다.
 - `report/04`와 본 보고서를 함께 두면 **문서 맵(PRD → DESIGN → Report 시리즈 → README)** 추적이 유지된다.
 
 ---
@@ -85,6 +86,7 @@
 - `README.md`
 - `docs/PRD_magic_square_4x4_tdd.md`
 - `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`
+- `report/01_problem_definition_report.md`
 - `report/02_dual_track_ui_logic_tdd_clean_architecture_report.md`
 - `report/03_user_entity_ecb_tdd_implementation_report.md`
 - `report/04_prd_journey_architecture_export_report.md`
