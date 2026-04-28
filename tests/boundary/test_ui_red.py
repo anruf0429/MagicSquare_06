@@ -7,10 +7,12 @@ import pytest
 from magic_square.boundary import (
     BoundaryError,
     MESSAGES,
+    UI_DOMAIN_FAILURE,
     UI_DUPLICATE_NONZERO,
     UI_INVALID_BLANK_COUNT,
     UI_INVALID_SIZE,
     UI_OUT_OF_RANGE,
+    solve_matrix,
     validate_matrix_raw,
 )
 
@@ -72,14 +74,37 @@ def test_ui_red_04_duplicate_nonzero() -> None:
 
 def test_ui_red_05_valid_input_mock_success_result_length_six() -> None:
     """UI-RED-05 — 유효 입력·모킹 성공 → 출력 result 길이 6 (경계 퍼사드·도메인 목)."""
-    pytest.fail("RED")
+    matrix = [
+        [16, 0, 2, 13],
+        [5, 10, 11, 8],
+        [9, 6, 7, 12],
+        [0, 15, 14, 1],
+    ]
+    result = solve_matrix(matrix)
+    assert "result" in result
+    assert len(result["result"]) == 6
 
 
 def test_ui_red_06_valid_input_domain_failure_maps_ui_domain_failure() -> None:
     """UI-RED-06 — 유효 입력·도메인 실패 → UI_DOMAIN_FAILURE."""
-    pytest.fail("RED")
+    matrix = [
+        [16, 0, 2, 13],
+        [5, 10, 11, 8],
+        [9, 6, 7, 12],
+        [0, 15, 14, 4],
+    ]
+    with pytest.raises(BoundaryError) as exc_info:
+        solve_matrix(matrix)
+    assert exc_info.value.code == UI_DOMAIN_FAILURE
+    assert exc_info.value.message == MESSAGES[UI_DOMAIN_FAILURE]
 
 
 def test_ui_red_07_success_path_result_order_matches_r1_c1_n1_r2_c2_n2() -> None:
     """UI-RED-07 — 성공 경로 → [r1,c1,n1,r2,c2,n2] 순서·값 일치."""
-    pytest.fail("RED")
+    matrix = [
+        [16, 0, 2, 13],
+        [5, 10, 11, 8],
+        [9, 6, 7, 12],
+        [0, 15, 14, 1],
+    ]
+    assert solve_matrix(matrix)["result"] == [1, 2, 3, 4, 1, 4]
