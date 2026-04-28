@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "magicsquare"
+version = "0.1.0"
+description = "4×4 Magic Square domain — TDD practice (PRD/DESIGN)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# 워크숍: dev=pytest만; 커버리지는 `pip install pytest-cov` 또는 `pip install -e ".[cov]"`.
+dev = ["pytest"]
+cov = ["pytest-cov"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true

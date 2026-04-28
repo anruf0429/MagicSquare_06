@@ -13,7 +13,7 @@
 |------|------|
 | **요구·설계 문서** | **PRD v2.1** 고정: Dual-Track을 **UX Contract / Logic Rule** 언어로 정리(§2.3), **CI·커버리지 게이트**·산출물(§7.1, **NFR-06**), Track A/B 정의(§8.0), 경계·도메인 테스트 역할(§8.4), **§9.1** 시나리오 매핑 표 등. 계층 설계는 `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`. 문제 정의·Dual-Track·ECB 예시·여정 인덱스·README 내보내기·PRD 갱신 이력·테스트 케이스 명세 내보내기는 `report/01`~`07` 참조. |
 | **구현 코드** | PRD **FR-01~05**(경계 검증·마방진 도메인 솔버)는 **아직 없음**. ECB·pytest AAA 패턴 예시로 **`User` 엔티티**와 해당 테스트만 존재(`src/entity/models/user.py`, `tests/entity/` — [report/03](report/03_user_entity_ecb_tdd_implementation_report.md)과 같은 취지). |
-| **빌드 설정** | 루트에 **`pyproject.toml` 없음**. 추가 시 Python 버전·pytest·커버리지의 단일 기준으로 삼을 것([report/05](report/05_readme_project_export_report.md) 후속 권장과 동일). |
+| **빌드 설정** | 루트 **`pyproject.toml`** — 편집 가능 설치 `pip install -e ".[dev]"`, `pytest`·(선택) `pytest-cov`·`[cov]` extra. |
 
 ---
 
@@ -31,7 +31,7 @@
 | 경계 `UI_*`·메시지·Dual-Track 요약 | [report/02_dual_track_ui_logic_tdd_clean_architecture_report.md](report/02_dual_track_ui_logic_tdd_clean_architecture_report.md) | §2.2 테이블, `UI-RED-*`, §0 PRD 정합 |
 | 실행·ECB·엔티티 TDD 절차 예시 | [report/03_user_entity_ecb_tdd_implementation_report.md](report/03_user_entity_ecb_tdd_implementation_report.md) | ECB·pytest AAA·`entity` 샘플 |
 | 에디터/에이전트 규칙 | [.cursorrules](.cursorrules) | ECB 방향, RED/GREEN/REFACTOR, pytest, coverage 최소값 |
-| 빌드·의존성(추가 시) | `pyproject.toml` (프로젝트 루트) | **현재 없음.** 추가되면 Python 버전·`pytest`·커버리지 설정의 단일 기준으로 사용. |
+| 빌드·의존성 | `pyproject.toml` (프로젝트 루트) | Python 3.10+·`dev`·`cov` optional-dependencies. |
 
 **문서 관계(한 줄):** 요구사항의 **단일 진실 공급원**은 PRD와 DESIGN으로 두고, PRD·여정·설계 인덱스는 [report/04](report/04_prd_journey_architecture_export_report.md) §4~6에 정리한다. 프로젝트 진입 문서(`README.md`) 작성·문서 맵 내보내기는 [report/05](report/05_readme_project_export_report.md)에서 보고한다. PRD v2.1 개정 요약은 [report/06](report/06_dual_track_mlops_prd_update_report.md)을 본다. **소프트웨어 테스트 케이스 명세** 산출·배경은 [report/07](report/07_test_case_specification_export_report.md)과 `docs/test_case_specification_magic_square_4x4.md`를 본다. `docs/5_*` 등 별도 분리는 report/04 §6 권장과 같은 취지로 유지할 수 있다.
 
@@ -95,14 +95,25 @@
 - **테스트:** `pytest`, **AAA**, 테스트 함수·파일 `test_` 접두, 타입힌트·공개 API Google docstring(Report/3·`.cursorrules`과 동일).  
 - **Python:** 3.10+ (`.cursorrules` `code_style`).  
 
-현재는 **`pyproject.toml` 없이** 예시 테스트만 있다. 의존성 설치 후 프로젝트 루트에서:
+**한 번만 (가상환경·개발 의존성):**
 
 ```powershell
-python -m pip install pytest pytest-cov
-python -m pytest tests/entity -q
+cd c:\DEV\MagicSquare
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+pip install -e ".[dev]"
 ```
 
-`tests/entity/`의 테스트는 실행 시 `src`를 `sys.path`에 넣도록 되어 있다. `pyproject.toml`과 전체 패키지 레이아웃이 생기면 위 명령과 문구를 그 설정에 맞게 바꾼다.
+**테스트 (전체):** 루트에서 `pytest` — `pyproject.toml`의 `testpaths`·`pythonpath=src`로 `entity`·`magic_square`를 import한다. `tests/domain`의 TC-MS RED 스켈레톤은 아직 `pytest.fail("RED")`라 **실패가 정상**이고, 엔티티 샘플만 보려면 `pytest tests/entity -q`.
+
+**커버리지:** `pip install pytest-cov` 또는 `pip install -e ".[cov]"` 후, 배포 이름은 `magicsquare`이지만 측정 대상 **임포트 패키지**는 `magic_square`·`entity`이다.
+
+```powershell
+pytest --cov=magic_square --cov=entity --cov-report=term-missing
+pytest --cov=magic_square --cov=entity --cov-report=html
+# htmlcov/index.html
+```
 
 ---
 
