@@ -2,6 +2,11 @@
 
 본 문서는 Magic Square(4×4) TDD 연습 프로젝트에 대해 **요구사항·사용자 여정·기술 시나리오·아키텍처/계약 설계**를 정리·문서화한 작업 결과를 보고서 형태로 내보낸 것이다. 구현 코드는 본 보고서 범위에 포함하지 않는다.
 
+| 항목 | 내용 |
+|------|------|
+| 보고서 버전 | 1.1 |
+| PRD 정합 | `docs/PRD_magic_square_4x4_tdd.md` **v2.1**(Dual-Track 언어·§7.1 CI·§9.1 매핑 등). 변경 요약은 `report/06_dual_track_mlops_prd_update_report.md` 참조. |
+
 ---
 
 ## 1) 작업 목적
@@ -17,7 +22,7 @@
 
 | 구분 | 경로 | 설명 |
 |------|------|------|
-| PRD | `docs/PRD_magic_square_4x4_tdd.md` | 12섹션 PRD(요구·범위·FR-01~05·BR-01~18·NFR·Dual-Track·Test Plan·아키텍처·리스크·Traceability) |
+| PRD | `docs/PRD_magic_square_4x4_tdd.md` | 12섹션 PRD(v2.1: §2.3 UX/Logic 언어·§7.1 CI/MLOps 정렬·§8.0/§8.4 Dual-Track·§9.1 시나리오 매핑·NFR-06·DEC-05 포함) |
 | 계층 설계 | `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md` | Domain / Boundary / Data / Integration, API·테스트 ID·커버리지·Traceability |
 | (대화·초안) | — | 아래 §3에 요약 기재: Epic, User Journey, User Stories, Gherkin 시나리오, Level 5 검증 체크리스트 |
 
@@ -59,7 +64,7 @@
 
 - **Background**: 4×4, 0=빈칸 2개, 1~16, 중복 없음, Magic Constant 34.
 - **시나리오**: (1) 작은 수→큰 수 조합으로 완성, (2) 역배치로만 완성, (3) 빈칸 개수 오류, (4) 중복, (5) 범위 초과.
-- 대표 격자는 PRD `§9.3` 데이터셋 A와 정합.
+- 대표 격자는 PRD `§9.4` 데이터셋 A와 정합.
 
 ### 3.5 Level 5 — 시나리오 검증·정리
 
@@ -80,13 +85,16 @@
 
 ### 4.2 Dual-Track·추적성
 
-- **Track A**: Boundary — 입력 검증, 고정 `UI_*` 코드·message, Domain 미호출 조건.
-- **Track B**: Domain — INV·마방진 판정·두 조합, `D-RED-*` 테스트.
+- **Track A (Boundary / UX Contract)**: 그래픽 UI가 아니라 **호출자·테스트가 관측하는 출력 계약** — 입력 검증, 고정 `UI_*` 코드·message, Domain 미호출 조건(PRD §2.3, §8.0).
+- **Track B (Logic Rule)**: Domain — INV·마방진 판정·두 조합, `D-RED-*` 테스트.
+- **시나리오 매핑**: 시나리오 ↔ UX Contract ↔ Logic Rule 표는 PRD **§9.1**.
+- **진입 정책**: 통합 경로 Boundary(FR-01) 선행; 솔버 내부 재검증 (a)/(b) 택1은 PRD **§8.4·DEC-05**.
 - **Traceability**: Concept / Invariant → Business Rule → FR → AC → Test Case → Component (`PRD` §12, `DESIGN` §4.5).
 
 ### 4.3 비기능·품질
 
 - Domain ≥95%, Boundary ≥85%, Data ≥80% 커버리지 목표(PR·설계서 기준).
+- **NFR-06**: 위 커버리지 하한 미달 시 **CI 파이프라인 실패**(PRD §7, §7.1).
 - 동일 입력→동일 출력(결정론), 원본 행렬 비변조(NFR 명시).
 - `.cursorrules`: ECB, pytest AAA, TDD 단계 규칙.
 
@@ -100,6 +108,7 @@
 | `report/02_dual_track_ui_logic_tdd_clean_architecture_report.md` | Dual-Track·계약·통합(본 작업 PRD/DESIGN과 정합) |
 | `report/03_user_entity_ecb_tdd_implementation_report.md` | User 엔티티 ECB/TDD 구현 보고 |
 | **본 보고서 (`04_…`)** | PRD·여정·설계 산출물 **내보내기·인덱스** |
+| `report/06_dual_track_mlops_prd_update_report.md` | PRD v2.1 개정·Dual-Track/MLOps 정렬 **변경 이력** |
 
 ---
 
@@ -118,4 +127,5 @@
 - `report/01_problem_definition_report.md`
 - `report/02_dual_track_ui_logic_tdd_clean_architecture_report.md`
 - `report/03_user_entity_ecb_tdd_implementation_report.md`
+- `report/06_dual_track_mlops_prd_update_report.md`
 - `.cursorrules`

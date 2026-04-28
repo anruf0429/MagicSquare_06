@@ -4,6 +4,17 @@
 
 ---
 
+## 0) PRD 정합 (`docs/PRD_magic_square_4x4_tdd.md` v2.1)
+
+- 본 보고서의 **Screen / UI Layer**는 그래픽 화면이 아니라 **Boundary**이며, PRD에서는 **UX Contract**(고정 `code`·`message`·성공 스키마의 관측 가능 출력)로 명명한다.
+- 시나리오 ↔ UX Contract ↔ Logic Rule 표는 PRD **§9.1**에 있다.
+- 통합 경로에서 **Boundary(FR-01) 선행**과 솔버 내부 재검증 **(a)/(b) 택1**은 PRD **§8.4**, **DEC-05**와 정합시킨다.
+- CI 단계·품질 게이트·산출물은 PRD **§7.1**, **NFR-06**을 따른다.
+
+변경 이력 요약: `report/06_dual_track_mlops_prd_update_report.md`.
+
+---
+
 # 1) Logic Layer (Domain Layer) 설계
 
 ## 1.1 도메인 개념

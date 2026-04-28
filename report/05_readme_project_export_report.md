@@ -4,9 +4,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 보고서 버전 | 1.0 |
+| 보고서 버전 | 1.1 |
 | 상태 | 산출물 인덱스·내보내기 |
-| 근거 문서 | `docs/PRD_magic_square_4x4_tdd.md`, `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`, `report/02_*`, `report/03_*`, `report/04_*`, `.cursorrules` |
+| 근거 문서 | `docs/PRD_magic_square_4x4_tdd.md`(v2.1), `docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md`, `report/02_*`, `report/03_*`, `report/04_*`, `report/06_*`, `.cursorrules` |
 
 ---
 
@@ -34,6 +34,7 @@
 | `report/03_user_entity_ecb_tdd_implementation_report.md` | ECB·pytest AAA·User 엔티티 구현 예시 |
 | `report/04_prd_journey_architecture_export_report.md` | PRD·여정·설계 산출 **인덱스**, Epic/Journey/Story 요약 |
 | **본 보고서 (`05_*`)** | **`README.md` 작업** 및 프로젝트 문서 **온보딩 내보내기** |
+| `report/06_dual_track_mlops_prd_update_report.md` | PRD v2.1·Dual-Track/MLOps 정렬 **갱신 이력** |
 
 ---
 
@@ -47,9 +48,9 @@
 | 문서·근거 표 | PRD, DESIGN, Report/2·3·4, `.cursorrules`, `pyproject.toml`(선택) | 사용자 요청 체계 |
 | 문서 관계 한 줄 | PRD+DESIGN을 SSoT로, 인덱스는 Report/4; Report/5 분리 전까지 README·본 보고서로 보완 | Report/04 §6 권장과 정합 |
 | 도메인 요약 | 4×4, 0 두 칸, 합 34, `int[6]`·1-index | PRD §5~6 |
-| 경계 `UI_*` 표 | 고정 code/message | Report/02 §2.2, PRD §8.1 |
+| 경계 `UI_*` 표 | 고정 code/message | Report/02 §2.2, PRD §8.1; PRD §2.3·§9.1(UX Contract·매핑) |
 | User Story 요약 | 검증·빈칸·누락·판정·두 조합 | Report/04 §3.3 |
-| 검증 기준 | NFR-01~04, 커버리지 목표 | PRD §7 |
+| 검증 기준 | NFR-01~06, 커버리지·CI 게이트 | PRD §7·§7.1 |
 | 실행·ECB·TDD | 의존 방향, pytest·AAA, Python 3.10+ | Report/03, `.cursorrules` |
 | To-Do | Epic-001 Track-A/B, Entity, Control, 품질, T-FR-01~05 등 | PRD FR·Dual-Track |
 | 참고 링크 | 위 문서 일괄 링크 | — |
@@ -87,4 +88,5 @@
 - `report/02_dual_track_ui_logic_tdd_clean_architecture_report.md`
 - `report/03_user_entity_ecb_tdd_implementation_report.md`
 - `report/04_prd_journey_architecture_export_report.md`
+- `report/06_dual_track_mlops_prd_update_report.md`
 - `.cursorrules`

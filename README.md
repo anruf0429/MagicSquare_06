@@ -11,11 +11,12 @@
 
 | 역할 | 문서 | 비고 |
 |------|------|------|
-| 본문·To-Do·검증 기준의 중심 | [docs/PRD_magic_square_4x4_tdd.md](docs/PRD_magic_square_4x4_tdd.md) | FR-01~05, BR-01~18, NFR, Dual-Track, Test Plan, Traceability Matrix |
+| 본문·To-Do·검증 기준의 중심 | [docs/PRD_magic_square_4x4_tdd.md](docs/PRD_magic_square_4x4_tdd.md) | v2.1 — §2.3·§7.1·§9.1 등; FR-01~05, BR, NFR, Dual-Track, Traceability |
 | 레이어·계약·TC ID (설계) | [docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md](docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md) | IC/OC, Domain/Boundary 구조 |
 | 스토리·에픽·여정 표현 | [report/04_prd_journey_architecture_export_report.md](report/04_prd_journey_architecture_export_report.md) | §3: Epic, Journey, User Stories, 기술 시나리오 요약 |
 | README·온보딩 작업 내보내기 | [report/05_readme_project_export_report.md](report/05_readme_project_export_report.md) | `README.md` 작성 배경·산출물·검증·후속 권장 |
-| 경계 `UI_*`·메시지·Dual-Track 요약 | [report/02_dual_track_ui_logic_tdd_clean_architecture_report.md](report/02_dual_track_ui_logic_tdd_clean_architecture_report.md) | §2.2 테이블, `UI-RED-*` |
+| PRD v2.1 갱신·Dual-Track/MLOps 정렬 이력 | [report/06_dual_track_mlops_prd_update_report.md](report/06_dual_track_mlops_prd_update_report.md) | 변경 요약·§2.3·§7.1·§9.1·DEC-05 등 |
+| 경계 `UI_*`·메시지·Dual-Track 요약 | [report/02_dual_track_ui_logic_tdd_clean_architecture_report.md](report/02_dual_track_ui_logic_tdd_clean_architecture_report.md) | §2.2 테이블, `UI-RED-*`, §0 PRD 정합 |
 | 실행·ECB·엔티티 TDD 절차 예시 | [report/03_user_entity_ecb_tdd_implementation_report.md](report/03_user_entity_ecb_tdd_implementation_report.md) | ECB·pytest AAA·`entity` 샘플 |
 | 에디터/에이전트 규칙 | [.cursorrules](.cursorrules) | ECB 방향, RED/GREEN/REFACTOR, pytest, coverage 최소값 |
 | 빌드·의존성(추가 시) | `pyproject.toml` (프로젝트 루트) | **현재 repo에 없을 수 있음.** 추가되면 Python 버전·`pytest`·커버리지 설정의 단일 기준으로 사용. |
@@ -68,6 +69,8 @@
 | NFR-02 | **경계(Boundary)** 커버리지 **≥ 85%** | 동일 |
 | NFR-03 | 동일 입력 → 동일 성공 배열 또는 동일 오류 코드·메시지 | 반복 테스트 |
 | NFR-04 | 호출자 `int[][]` **비변조**(내부는 복사본으로 연산) | 전후 스냅샷/단언 |
+| NFR-05 | 성능(선택): 단일 요청 **50ms** 이내 등 | 벤치마크(선택) |
+| NFR-06 | **CI**: NFR-01·02 미달 시 **파이프 실패**(§7.1 권장 단계·아티팩트) | CI 로그·커버리지 리포트 |
 
 > `.cursorrules`는 저장소 전역 `coverage_minimum: 80%`를 명시 — **마방진 도메인/경계에 대해서는 PRD NFR(95/85)을 우선**한다.
 
@@ -111,7 +114,7 @@ python -m pytest -q
 - [ ] **T-FR-04** 완전 격자 마방진 판정(합 34) — [FR-04](docs/PRD_magic_square_4x4_tdd.md)  
 - [ ] **T-FR-05** 두 조합 시도, `int[6]` 반환·실패 시 도메인/경계 코드 — [FR-05](docs/PRD_magic_square_4x4_tdd.md)  
 - [ ] **T-잘못된 입력** 3×4, 빈칸 1·3, 범위 초과, 중복(TP-FAIL, PRD §9)  
-- [ ] **T-커버리지** Domain ≥95%, Boundary ≥85%, 회귀 시 TC ID 삭제 금지(정책은 PRD §9.2)  
+- [ ] **T-커버리지** Domain ≥95%, Boundary ≥85%, 회귀 시 TC ID 삭제 금지(정책은 PRD §9.3)  
 
 ---
 
