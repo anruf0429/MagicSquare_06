@@ -105,28 +105,144 @@ python -m pytest tests/entity -q
 
 ---
 
-## To-Do (PRD FR·Dual-Track 기반 — 완료 시 체크)
+## To-Do (PRD FR·Dual-Track·C2C 추적)
 
-아래는 **PRD**를 주 소스로 한 구현·검증 단위이다. 상세 ID·AC는 PRD 본문이 우선한다.
+**주 소스:** [PRD](docs/PRD_magic_square_4x4_tdd.md) FR-01~05, BR, §9 Test Plan, §12 Traceability. **설계 순서:** [DESIGN](docs/DESIGN_layered_architecture_tdd_magic_square_4x4.md).
 
-### Epic-001 — 4×4 마방진 완성 시스템 (Dual-Track, ECB)
+**추적성(Concept-to-Code):** 각 작업은 **Task → FR(요구)·PRD TC ID(해당 시) → Scenario 수준 → 테스트 이름**으로 내려갈 수 있게 유지한다. PRD §9.1·§12의 `UI-RED-*`, `D-RED-*`, `TP-OK`/`TP-FAIL`과 연결한다.
 
-- [ ] **E1-Track-A (Boundary):** FR-01 — 원시 `int[][]`에서 4×4, 빈칸 2, 0/1~16, 비0 중복 검증; 실패 시 `UI_*`·고정 `message`·**도메인 `solve` 미호출** (AC-05)  
-- [ ] **E1-Track-B (Domain):** FR-02~05 — row-major 빈칸, 누락 두 수, `MagicSquare` 판정(34), 시도1→시도2·`int[6]`·`DOMAIN_NOT_MAGIC` (경계는 `UI_DOMAIN_FAILURE`로 매핑)  
-- [ ] **E1-Entity/VO:** 4×4 보드(복사·불변)·`Position`(1-index)·`MissingNumbers` 등 (DESIGN, NFR-04)  
-- [ ] **E1-Control:** 경계 통과 시에만 use case로 검증·탐색·솔버 순서 조율 — **규칙은 Entity/Domain Service에**  
-- [ ] **E1-품질:** NFR-01~04, PRD `§8`·`§9` TC(`UI-RED-*`, `D-RED-*`, `TP-OK/TP-FAIL`) 및 Traceability `§12`  
-- [ ] **E1-리팩터:** 두 트랙 테스트가 모두 Green일 때만 구조 정리(`.cursorrules` `refactor_phase`)  
+**범위 주의:** 빈 칸 두 개·누락 두 수는 **결정론적 규칙(FR-02~03)** 이므로 일반 탐색 알고리즘(N-Queen 등)은 **본 PRD 범위에 없음**. 성능은 NFR-05(선택, 예: 50ms)로 별도 검증한다.
 
-### 세부 작업(체크리스트, PRD 기능과 대응)
+**별도 연습(마방진 Epic과 무관):** [report/03](report/03_user_entity_ecb_tdd_implementation_report.md) 패턴의 **`User` 엔티티·`tests/entity`** 는 ECB 샘플이며, 아래 Epic 체크와는 분리한다.
 
-- [ ] **T-FR-01** 입력 검증(Boundary + 필요 시 Domain 중복 경로) — [FR-01](docs/PRD_magic_square_4x4_tdd.md)  
-- [ ] **T-FR-02** 빈칸 탐지(row-major, 1-index) — [FR-02](docs/PRD_magic_square_4x4_tdd.md)  
-- [ ] **T-FR-03** 누락 숫자 2개·`small`/`large` — [FR-03](docs/PRD_magic_square_4x4_tdd.md)  
-- [ ] **T-FR-04** 완전 격자 마방진 판정(합 34) — [FR-04](docs/PRD_magic_square_4x4_tdd.md)  
-- [ ] **T-FR-05** 두 조합 시도, `int[6]` 반환·실패 시 도메인/경계 코드 — [FR-05](docs/PRD_magic_square_4x4_tdd.md)  
-- [ ] **T-잘못된 입력** 3×4, 빈칸 1·3, 범위 초과, 중복(TP-FAIL, PRD §9)  
-- [ ] **T-커버리지** Domain ≥95%, Boundary ≥85%, 회귀 시 TC ID 삭제 금지(정책은 PRD §9.3)  
+### Scenario 수준 (테스트·슬라이드 정합)
+
+| 수준 | 의미 |
+|------|------|
+| **L0** | 기능 개요·스코프 |
+| **L1** | 정상 흐름(해피 패스) |
+| **L2** | 경계·에지(합·좌표 경계 등) |
+| **L3** | 실패·오류 경로(`UI_*`, `DOMAIN_*`, 무해) |
+
+---
+
+### Epic-001 — 4×4 마방진 완성 시스템 (Dual-Track TDD, ECB)
+
+#### Phase 0 — Entity / VO (선행, NFR-04·FR 출력 정합)
+
+- **US-E01 — 보드·좌표·누락 값 객체**
+
+  - [ ] **TASK-E01** 4×4 보드 표현(불변·깊은 복사·원본 `int[][]` 비변조) — **NFR-04**, DESIGN  
+    - [ ] RED: 유효 행렬에서 생성·호출 후 원본 동등  
+    - [ ] GREEN: 최소 구현  
+    - [ ] REFACTOR: 인덱스·상수(`SIZE=4`) 정리  
+
+  - [ ] **TASK-E02** `Position` 또는 동등 VO — 좌표 **1-index**, 범위 1~4 — **FR-02·FR-05** 출력  
+    - [ ] RED / GREEN / REFACTOR  
+
+  - [ ] **TASK-E03** `MissingNumbers`(또는 동등) — `small` ≤ `large` 고정 — **FR-03**  
+
+---
+
+#### Track B — Domain (Logic Rule, FR-02~05)
+
+- **US-D01 — 빈칸(row-major)** — **FR-02**  
+
+  - [ ] **TASK-D01** 두 개의 `0` 위치를 row-major 순으로 `(r1,c1),(r2,c2)` — FR-02-AC-02  
+    - [ ] RED: PRD §9 데이터셋·예상 좌표 대조  
+    - [ ] GREEN / REFACTOR  
+
+- **US-D02 — 누락 두 수** — **FR-03**  
+
+  - [ ] **TASK-D02** 1~16 중 미등장 두 수 → `small`, `large`; 개수 불일치 시 `DOMAIN_INVALID_MISSING_COUNT` — FR-03-AC-01  
+    - [ ] RED / GREEN / REFACTOR  
+
+- **US-D03 — 마방진 판정(합 34)** — **FR-04**  
+
+  - [ ] **TASK-D03** 완전 채워진 4×4에 대해 행·열·두 대각 합 34 여부 — FR-04-AC-01~02  
+    - [ ] RED: 알려진 마방진 true·일부 깨진 행 false  
+    - [ ] GREEN / REFACTOR  
+
+- **US-D04 — 두 조합 시도·해 반환** — **FR-05**  
+
+  - [ ] **TASK-D04** 시도1(`small`→첫 빈칸, `large`→둘째) 후 FR-04; 성공 시 **시도2 생략**(FR-05-AC-03). 실패 시 시도2(역배치). 둘 다 실패 시 `DOMAIN_NOT_MAGIC`. 성공 시 `int[6]` — FR-05-AC-01~06  
+    - [ ] RED: TP-OK·TP-FAIL·D-RED 시나리오별 실패 테스트 먼저  
+    - [ ] GREEN  
+    - [ ] REFACTOR: 채움은 **복사본**에 적용 후 판정(NFR-04)  
+
+- **US-D05 — (선택) 도메인 재검증 경로** — PRD §8.4 / DESIGN과 택1 정책 일치  
+
+  - [ ] **TASK-D05** Boundary 통과 행렬에 대한 도메인 단위 테스트와 솔버 내부 재검증 (a)/(b) 중 **한 가지만** 선택해 IT와 모순 없게 유지  
+
+---
+
+#### Track A — Boundary (UX Contract, FR-01 + 실패 매핑)
+
+- **US-B01 — 원시 입력 검증** — **FR-01**  
+
+  - [ ] **TASK-B01** 4×4 아님·빈칸 수≠2·0/1~16 밖·비0 중복 → 각각 `UI_*`·**고정 `message`** (본 README 표와 문자열 일치)  
+    - [ ] RED: `UI-RED-01`~`04` 대응 실패 케이스  
+    - [ ] GREEN  
+    - [ ] REFACTOR: 검증 순서·조기 종료 명확화  
+
+  - [ ] **TASK-B02** 위 실패 시 **도메인 `solve`/솔버 호출 0회** — **FR-01-AC-05** (스파이/모킹)  
+
+- **US-B02 — 도메인 실패를 경계 응답으로**  
+
+  - [ ] **TASK-B03** `DOMAIN_NOT_MAGIC` → `UI_DOMAIN_FAILURE` + `no valid magic-square completion found` — FR-05·§8.1  
+    - [ ] RED / GREEN / REFACTOR  
+
+---
+
+#### Phase C — Control
+
+- **US-C01 — 유스케이스 조율**  
+
+  - [ ] **TASK-C01** Boundary 통과 시에만: 검증(필요 시)·빈칸→누락→솔버 호출·결과 조립 — **규칙은 Entity/Domain에만**, Control은 순서·위임  
+
+---
+
+#### Phase I — 통합·품질·회귀
+
+- **US-I01 — 끝단·시나리오**  
+
+  - [ ] **TASK-I01** PRD §9.1 매핑표·TP-OK/TP-FAIL·잘못된 입력 시나리오 통합 테스트  
+
+- **US-I02 — 비기능·CI**  
+
+  - [ ] **TASK-I02** NFR-03 결정론·NFR-04 비변조 회귀 테스트  
+  - [ ] **TASK-I03** 커버리지: Domain **≥95%**, Boundary **≥85%** (NFR-01·02); CI에서 미달 시 실패(NFR-06, §7.1)  
+  - [ ] **TASK-I04** 회귀 시 기존 TC ID·테스트 삭제 금지(§9.3 정책) — 리팩터는 Green 유지 후  
+
+- **US-I03 — 리팩터 게이트**  
+
+  - [ ] **TASK-I05** Track A·B 테스트가 모두 Green일 때만 ECB 디렉터리·명명 정리(`.cursorrules` refactor_phase)  
+
+---
+
+### 추적 매트릭스 (구현 진행 시 채움)
+
+PRD §12·pytest 노드 이름과 맞추어 행을 추가한다.
+
+| Task ID | FR / TC (예) | Scenario | 테스트 이름(가칭) | 상태 |
+|---------|----------------|----------|-------------------|------|
+| TASK-B01 | FR-01, UI-RED-01~04 | L3 | `test_boundary_ui_invalid_size` 등 | ⬜ TODO |
+| TASK-B02 | FR-01-AC-05 | L3 | `test_domain_never_called_on_boundary_fail` | ⬜ TODO |
+| TASK-D03 | FR-04, TP-OK-* | L1 | `test_judge_known_magic_square` | ⬜ TODO |
+| TASK-D04 | FR-05 | L1/L3 | `test_solve_attempt_order`, `test_domain_not_magic` | ⬜ TODO |
+| TASK-I03 | NFR-01·02 | L0 | `pytest --cov` 리포트 | ⬜ TODO |
+
+---
+
+### 한 줄 요약 (기존 FR 체크리스트)
+
+| FR | 내용 |
+|----|------|
+| FR-01 | 경계: 형·빈칸·범위·중복 → `UI_*`, 솔버 미호출 |
+| FR-02 | 빈칸 두 곳, row-major, 1-index |
+| FR-03 | 누락 두 수 `small`/`large` |
+| FR-04 | 완전 격자 마방진 판정(34) |
+| FR-05 | 두 조합 시도, `int[6]` 또는 `DOMAIN_NOT_MAGIC` / `UI_DOMAIN_FAILURE` |
 
 ---
 
