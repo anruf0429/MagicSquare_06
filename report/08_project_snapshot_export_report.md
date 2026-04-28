@@ -41,7 +41,7 @@ src/magic_square/
   boundary/
     __init__.py
     errors.py          # BoundaryError, UI_* , MESSAGES
-    validation.py      # validate_matrix_raw → NotImplementedError
+    matrix_validator.py # validate_matrix_raw → NotImplementedError
   domain/
     __init__.py
     errors.py          # DomainError, DOMAIN_*

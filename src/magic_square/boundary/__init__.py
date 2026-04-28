@@ -11,7 +11,7 @@ from magic_square.boundary.errors import (
     UI_OUT_OF_RANGE,
     BoundaryError,
 )
-from magic_square.boundary.validation import validate_matrix_raw
+from magic_square.boundary.matrix_validator import validate_matrix_raw
 
 __all__ = [
     "MESSAGES",
